@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sokaklarımız Kimin Adını Taşıyor?</title>
+<meta name="description" content="Türkiye'deki sokakların kaçı bir kişinin adını taşıyor, kaçı kadın? OpenStreetMap'teki 250 bini aşkın sokaktan il il sonuç.">
+<meta property="og:title" content="Sokaklarımız kimin adını taşıyor?">
+<meta property="og:description" content="Türkiye'de kişi adı taşıyan sokakları saydık: kaçı kadın, en çok kimin adı var, senin ilinde durum ne?">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%231a2a5e%22/%3E%3Crect x=%224%22 y=%2212%22 width=%2224%22 height=%228%22 rx=%221%22 fill=%22%23fff%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500;75..100,700;75..100,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--zemin:#0d1430;--kart:#162043;--yazi:#eef1fb;--soluk:#a3acc9;--cizgi:#2a3560;--tabela:#1b3a8f;--kadin:#ffb627;--erkek:#6f83c9}
+:root[data-theme="light"]{--zemin:#f3f4f9;--kart:#fff;--yazi:#121a38;--soluk:#59617f;--cizgi:#d9dcea;--tabela:#1b3a8f;--kadin:#c77700;--erkek:#5d6fb3}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--zemin:#f3f4f9;--kart:#fff;--yazi:#121a38;--soluk:#59617f;--cizgi:#d9dcea;--kadin:#c77700;--erkek:#5d6fb3}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--zemin);color:var(--yazi);font:16px/1.55 Inter,system-ui,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding-left:16px;padding-right:16px}
+a{color:var(--kadin)}
+.tabela{display:inline-block;background:var(--tabela);color:#fff;font:700 .78rem/1 Archivo,sans-serif;letter-spacing:.06em;padding:7px 12px;border-radius:4px;border:2px solid #fff;outline:2px solid var(--tabela)}
+h1{font:900 clamp(2.3rem,7vw,4.6rem)/1 Archivo,sans-serif;font-stretch:80%;letter-spacing:-.01em;margin:16px 0 0;max-width:17ch}
+h1 em{font-style:normal;color:var(--kadin)}
+.lede{font-size:1.1rem;color:var(--soluk);max-width:60ch;margin:14px 0 0}
+header{padding-top:40px}
+.harita{position:relative;margin:18px 0 0}
+.harita canvas{display:block;width:100%;height:auto;cursor:pointer}
+.acik{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:.88rem;color:var(--soluk);margin-top:4px}
+.acik i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+.sayilar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0 0}
+.sayilar div{background:var(--kart);border:1px solid var(--cizgi);border-radius:10px;padding:14px 16px}
+.sayilar b{display:block;font:900 clamp(1.6rem,4vw,2.3rem)/1.05 Archivo,sans-serif;font-stretch:85%}
+.sayilar span{font-size:.86rem;color:var(--soluk)}
+.sayilar .k b{color:var(--kadin)}
+section{padding-top:56px}
+h2{font:900 clamp(1.6rem,4vw,2.5rem)/1.05 Archivo,sans-serif;font-stretch:85%;margin:0 0 8px}
+.not{color:var(--soluk);max-width:64ch;margin:0 0 16px}
+.iki{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.liste{background:var(--kart);border:1px solid var(--cizgi);border-radius:10px;padding:16px 18px}
+.liste h3{font:700 1.05rem Archivo,sans-serif;margin:0 0 10px}
+.sat{display:grid;grid-template-columns:minmax(0,1fr) 3.4em;gap:2px 10px;align-items:baseline;padding:4px 0;font-size:.95rem}
+.sat .cubuk{grid-column:1/-1;height:6px;border-radius:3px;background:var(--erkek);min-width:2px}
+.sat.k .cubuk{background:var(--kadin)}
+.sat b{text-align:right;font:700 .95rem Archivo,sans-serif}
+.sat small{color:var(--soluk)}
+select{font:600 1rem Inter,sans-serif;background:var(--kart);color:var(--yazi);border:2px solid var(--cizgi);border-radius:8px;padding:10px 12px;min-height:44px}
+.il-sonuc{margin-top:16px}
+.buyuk{font:900 clamp(2.4rem,7vw,4rem)/1 Archivo,sans-serif;font-stretch:85%;color:var(--kadin)}
+.sira{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+footer{padding-top:56px;padding-bottom:40px;color:var(--soluk);font-size:.9rem}
+footer h3{color:var(--yazi);font:700 1.1rem Archivo,sans-serif;margin:18px 0 4px}
+footer p{margin:4px 0;max-width:72ch}
+@media (max-width:720px){.sayilar{grid-template-columns:1fr 1fr}.iki,.sira{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <span class="tabela">SOKAKLARIMIZ</span>
+  <h1 id="baslik">Sokaklarımız kimin adını taşıyor?</h1>
+  <p class="lede" id="lede">Yükleniyor…</p>
+  <div class="harita"><canvas id="harita" width="1080" height="500" role="img" aria-label="Türkiye haritasında kişi adı taşıyan sokaklar. Kadın adı taşıyanlar parlak noktalarla gösterilir."></canvas></div>
+  <div class="acik"><span><i style="background:var(--kadin)"></i>Kadın adı taşıyan sokak</span><span><i style="background:var(--erkek)"></i>Erkek adı taşıyan sokak</span><span>Bir ile dokun: aşağıda açılır.</span></div>
+  <div class="sayilar" id="sayilar"></div>
+</header>
+<main class="wrap">
+  <section><h2>En çok kimin adı var?</h2><p class="not" id="kim-not"></p><div class="iki"><div class="liste"><h3>Herkes</h3><div id="l-hepsi"></div></div><div class="liste"><h3>Kadınlar</h3><div id="l-kadin"></div></div></div></section>
+  <section id="il"><h2>Senin ilinde durum ne?</h2><p class="not">Haritadan bir ile dokun ya da seç.</p>
+    <label for="il-sec" style="position:absolute;left:-9999px">İl</label><select id="il-sec"></select>
+    <div class="il-sonuc" id="il-sonuc"></div>
+    <div class="sira"><div class="liste"><h3>Kadın oranı en yüksek iller</h3><div id="l-ust"></div></div><div class="liste"><h3>En düşük iller</h3><div id="l-alt"></div></div></div>
+    <p class="not" style="margin-top:8px" id="sira-not"></p></section>
+  <section><h2>Bu insanlar kim?</h2><p class="not" id="tur-not"></p><div class="liste"><div id="l-tur"></div></div></section>
+</main>
+<footer class="wrap" id="yontem"></footer>
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const T = (n) => n.toLocaleString("tr-TR");
+const Y = (x, d = 1) => x.toLocaleString("tr-TR", {minimumFractionDigits: d, maximumFractionDigits: d});
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const TUR = {sehit: "Şehitler", yerel: "Yerel kişiler (muhtar, hayırsever, aile büyüğü…)", siyaset: "Devlet adamları, siyasetçiler", din: "Din büyükleri", asker: "Askerler, komutanlar", edebiyat: "Şair, yazar, düşünür", padisah: "Hükümdarlar", sanat: "Sanatçılar, mimarlar", bilim: "Bilim insanı, hekim, öğretmen", diger: "Diğer"};
+const B0 = 35.5, B1 = 42.3, L0 = 25.5, L1 = 45;
+let O, SINIR, N, seciliIl = null;
+const kosK = 0.74; // boylam ölçeği
+
+function olcek(W) { const H = Math.round(W * (B1 - B0) / ((L1 - L0) * kosK)); return {W, H, x: (lon) => (lon - L0) / (L1 - L0) * W, y: (lat) => H - (lat - B0) / (B1 - B0) * H}; }
+
+function ciz() {
+  const c = $("#harita"), W = Math.min(1600, Math.round(c.clientWidth * (devicePixelRatio || 1))) || 1080, o = olcek(W);
+  c.width = o.W; c.height = o.H;
+  const g = c.getContext("2d"), st = getComputedStyle(document.documentElement);
+  const renk = (k) => st.getPropertyValue(k).trim();
+  g.lineWidth = Math.max(1, W / 1400); g.strokeStyle = renk("--cizgi"); g.fillStyle = renk("--kart");
+  for (const [p, h] of SINIR) {
+    g.beginPath(); h.forEach(([x, y], i) => (i ? g.lineTo(o.x(x), o.y(y)) : g.moveTo(o.x(x), o.y(y)))); g.closePath();
+    g.fillStyle = seciliIl === +p ? renk("--cizgi") : renk("--kart"); g.fill(); g.stroke();
+  }
+  const r = Math.max(1.5, W / 800), d = new DataView(N), e = [], k = [];
+  for (let i = 0; i + 4 <= d.byteLength; i += 4) { const x = d.getUint16(i, true), yy = d.getUint16(i + 2, true); ((yy & 0x8000) ? k : e).push(x, yy & 0x7fff); }
+  const nokta = (a, rnk, rr, al) => { g.fillStyle = rnk; g.globalAlpha = al; for (let i = 0; i < a.length; i += 2) { const lon = L0 + a[i] / 65535 * (L1 - L0), lat = B0 + a[i + 1] / 32767 * (B1 - B0); g.fillRect(o.x(lon) - rr / 2, o.y(lat) - rr / 2, rr, rr); } g.globalAlpha = 1; };
+  nokta(e, renk("--erkek"), r, .9); nokta(k, renk("--kadin"), r, 1); // eşit boy: harita oranı abartmasın
+}
+
+function satirlar(el, a, ust) { el.innerHTML = a.map((s) => `<div class="sat${s.k ? " k" : ""}"><span>${esc(s.ad)}${s.alt ? ` <small>${esc(s.alt)}</small>` : ""}</span><b>${s.v}</b><div class="cubuk" style="width:${Math.max(.5, s.n / ust * 100)}%"></div></div>`).join(""); }
+
+function ilGoster(p) {
+  const i = O.iller.find((x) => +x.p === +p); if (!i) return;
+  seciliIl = +p; $("#il-sec").value = p; ciz();
+  const oran = i.kadin + i.erkek ? i.kadin / (i.kadin + i.erkek) * 100 : 0;
+  $("#il-sonuc").innerHTML = `<div class="buyuk">%${Y(oran)}</div><p style="margin:4px 0 14px">${esc(i.ad)}'da kişi adı taşıyan ${T(i.kadin + i.erkek)} sokağın ${T(i.kadin)} tanesi kadın adı taşıyor. ${T(i.sokak)} sokaktan ${T(i.numara)} tanesinin (%${Y(i.numara / i.sokak * 100, 0)}) adı yok, yalnız numarası var.</p>
+    <div class="iki"><div class="liste"><h3>${esc(i.ad)}'da en çok</h3><div id="il-k"></div></div><div class="liste"><h3>${esc(i.ad)}'da kadınlar</h3><div id="il-ka"></div></div></div>`;
+  const u1 = (i.kisiler[0] || [0, 1])[1];
+  satirlar($("#il-k"), i.kisiler.map(([ad, n]) => ({ad, n, v: T(n)})), u1);
+  const u2 = (i.kadinlar[0] || [0, 1])[1];
+  if (i.kadinlar.length) satirlar($("#il-ka"), i.kadinlar.map(([ad, n]) => ({ad, n, v: T(n), k: true})), u2); else $("#il-ka").innerHTML = `<p class="not">Kadın adı taşıyan sokak bulunamadı.</p>`;
+}
+
+function yukle([o, s, n, den]) {
+  O = o; SINIR = s; N = n;
+  const c = o.say, oran = c.kadin / (c.kadin + c.erkek) * 100, yuz = Math.round(oran);
+  const ustSinir = (c.kadin + c.belirsiz_kadin) / (c.kadin + c.erkek + c.belirsiz_kadin + c.belirsiz_erkek) * 100;
+  $("#baslik").innerHTML = `Bir insanın adını taşıyan her 100 sokaktan <em>${yuz}</em> tanesi kadın.`;
+  $("#lede").textContent = `OpenStreetMap'teki ${T(c.sokak)} sokağı tek tek saydık. Adı açıkça bir kişiyi anan ${T(c.kisi)} sokağın ${T(c.kadin)} tanesi kadın, ${T(c.erkek)} tanesi erkek adı taşıyor. “Gül”, “Çiğdem”, “Murat” gibi tek sözcüklü adlar kişi mi belli olmadığı için bu sayıya katılmadı; hepsi kişi sayılsaydı oran %${Y(ustSinir, 0)} olurdu.`;
+  $("#sayilar").innerHTML = `<div><b>${T(c.sokak)}</b><span>tekil sokak</span></div><div><b>%${Y(c.numara / c.sokak * 100, 0)}</b><span>yalnız numara: adı yok</span></div><div><b>${T(c.kisi)}</b><span>bir kişinin adını taşıyor</span></div><div class="k"><b>%${Y(oran)}</b><span>kişilerin kadın oranı</span></div>`;
+  const hep = o.kisiler.slice(0, 15), kad = o.kadinlar.slice(0, 15), ust = hep[0][1];
+  satirlar($("#l-hepsi"), hep.map(([ad, n, cn]) => ({ad, n, v: T(n), k: cn === "k"})), ust);
+  satirlar($("#l-kadin"), kad.map(([ad, n]) => ({ad, n, v: T(n), k: true})), ust);
+  $("#kim-not").textContent = `İki liste aynı ölçekte çizildi. En çok sokağa adı verilen kadın ${kad[0][0]} (${T(kad[0][1])}), en çok sokağa adı verilen kişi ${hep[0][0]} (${T(hep[0][1])}).`;
+  const sel = $("#il-sec"), ils = [...o.iller].sort((a, b) => a.ad.localeCompare(b.ad, "tr"));
+  sel.innerHTML = ils.map((i) => `<option value="${i.p}">${esc(i.ad)}</option>`).join("");
+  sel.onchange = () => ilGoster(sel.value);
+  const SINIR_N = 200, sira = o.iller.filter((i) => i.kadin + i.erkek >= SINIR_N).map((i) => ({ad: i.ad, oran: i.kadin / (i.kadin + i.erkek) * 100, n: i.kadin + i.erkek})).sort((a, b) => b.oran - a.oran);
+  const m = sira[0].oran;
+  satirlar($("#l-ust"), sira.slice(0, 7).map((i) => ({ad: i.ad, n: i.oran, v: "%" + Y(i.oran), k: true})), m);
+  satirlar($("#l-alt"), sira.slice(-7).reverse().map((i) => ({ad: i.ad, n: i.oran, v: "%" + Y(i.oran), k: true})), m);
+  $("#sira-not").textContent = `Yalnız kişi adlı sokağı en az ${SINIR_N} olan ${sira.length} il sıralandı. Farklar OSM'nin o ildeki kapsamını da yansıtır.`;
+  const tt = o.turler.reduce((t, x) => t + x[1], 0), tm = o.turler[0][1];
+  satirlar($("#l-tur"), o.turler.map(([k, n]) => ({ad: TUR[k] || k, n, v: "%" + Y(n / tt * 100, 0)})), tm);
+  const seh = o.turler.find((x) => x[0] === "sehit");
+  $("#tur-not").textContent = seh ? `Kişi adı taşıyan sokakların %${Y(seh[1] / tt * 100, 0)} kadarı bir şehidin adını taşıyor. Tür, adın kendisinden ve tanınmış kişilerin bilgisinden çıkarıldı; yerel kişiler hakkında ad dışında bilgi yok.` : "";
+  $("#yontem").innerHTML = `<h3>Yöntem</h3>
+    <p><b>Veri:</b> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap katkıcıları</a> (ODbL), ${esc(o.osm_tarih)} tarihli Türkiye dosyası. OSM aynı sokağı parçalara böler; aynı ad ve yaklaşık 3 km'lik aynı hücre tek sokak sayıldı. Şehirlerarası yollar, kavşak, köprü, site ve kümeevleri kapsam dışı.</p>
+    <p><b>Sınıflandırma:</b> ${T(den.farkli)} farklı sokak adı bir dil modeline (Meta Muse Spark) soruldu: kişi mi, cinsiyeti ne, ne iş yapmış. “Gül”, “Yıldız”, “Peker” gibi tek başına kişi olup olmadığı belli olmayan ${T(c.belirsiz)} sokak oranlara katılmadı. Bunların büyük kısmı çiçek ve doğa adı; bu yüzden asıl sayı kesin kişilerdir. Kadın ya da erkek adı olabilecek bu sözcüklerin hepsi kişi sayılsaydı oran %${Y(ustSinir)} olurdu, yani gerçek değer bu iki sayı arasında ve büyük ihtimalle düşük ucuna yakın. Cinsiyeti adından anlaşılmayan ${T(c.bilinmez)} kişi paydaya girmedi.</p>
+    <p><b>Elle denetim:</b> ${den.metin}</p>
+    <p><b>Sınırlar:</b> OSM'de her sokak yok, bazı illerde kapsam daha zayıf. Resmî adres verisi (UAVT) açık olmadığı için kullanılamadı. Model bir kişiyi kaçırmış ya da cinsiyetini yanlış bilmiş olabilir; il sıralaması bu yüzden kesin değil, eğilim gösterir. Kişiler hakkında yalnız sokak adında yazan bilgi kullanıldı.</p>
+    <p>Kod ve yöntem: <a href="https://github.com/birtohum/sokak-adlari">github.com/birtohum/sokak-adlari</a> · <a href="https://birtohum.github.io/">birtohum</a></p>`;
+  ciz(); ilGoster(34);
+  $("#harita").onclick = (e) => {
+    const c2 = e.target, rc = c2.getBoundingClientRect(), W = rc.width, oo = olcek(W);
+    const lon = L0 + (e.clientX - rc.left) / W * (L1 - L0), lat = B0 + (oo.H - (e.clientY - rc.top)) / oo.H * (B1 - B0);
+    for (const [p, h] of SINIR) { let ic = false; for (let i = 0, j = h.length - 1; i < h.length; j = i++) { const [xi, yi] = h[i], [xj, yj] = h[j]; if ((yi > lat) !== (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) ic = !ic; }
+      if (ic) { ilGoster(p); $("#il").scrollIntoView({behavior: "smooth"}); return; } }
+  };
+  let z; addEventListener("resize", () => { clearTimeout(z); z = setTimeout(ciz, 200); });
+}
+
+Promise.all([fetch("veri/ozet.json").then((r) => r.json()), fetch("veri/sinir.json").then((r) => r.json()), fetch("veri/noktalar.bin").then((r) => r.arrayBuffer()), fetch("veri/denetim.json").then((r) => r.json())])
+  .then(yukle).catch((e) => { $("#lede").textContent = "Veri yüklenemedi: " + e; });
+</script>
+</body>
+</html>
