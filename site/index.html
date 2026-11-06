@@ -159,5 +159,6 @@ function yukle([o, s, n, den]) {
 Promise.all([fetch("veri/ozet.json").then((r) => r.json()), fetch("veri/sinir.json").then((r) => r.json()), fetch("veri/noktalar.bin").then((r) => r.arrayBuffer()), fetch("veri/denetim.json").then((r) => r.json())])
   .then(yukle).catch((e) => { $("#lede").textContent = "Veri yüklenemedi: " + e; });
 </script>
+<script data-goatcounter="https://birtohum.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
