@@ -16,7 +16,9 @@ OpenStreetMap'teki Türkiye sokaklarını saydım: kaçının adı yok, kaçı b
 ## Ne kadar güvenilir?
 
 - **Elle denetim:** rastgele 150 “kişi” kararından 2'si hatalı, 100 “kadın” kararından 2'si hatalı ya da şüpheli, 100 “kişi değil” kararında kaçak görülmedi. Denetimi tek kişi yaptı, örnek küçük (`veri/denetim_ornek.csv`).
-- **En büyük belirsizlik:** “Gül, Çiğdem, Yasemin, Murat, Barış” gibi tek sözcüklü 40.528 sokak hem ad hem sözcük olabildiği için sayılmadı. Hepsi kişi sayılsaydı oran %26 olurdu. Çoğu çiçek ve doğa adı olduğundan gerçek değer düşük uca yakın olmalı, ama bu ölçülmedi.
+- **En büyük belirsizlik, üç basamak:** açıkça belirli bir kişiyi anan sokaklarda **%3,9**. Yalnız ilk adıyla geçenler (Elif, Burak; 7.312 sokak, bir kişiyi anmıyor olabilir) eklenince **%12,3**. Aynı zamanda sözcük olan adlar (Gül, Çiğdem, Barış; 18.330 sokak) da eklenince **%26**; bu son sayı gerçekçi değil, çünkü çoğu çiçek ve kavram adı ve kadın adları bu sözcüklerde daha sık. Ayrım `araclar/belirsiz.py` ile yapıldı, elle denetlenmedi.
 - OSM kapsamı illere göre değişir; il sıralaması eğilim gösterir. Resmî adres verisi açık olmadığı için kullanılamadı.
+
+Veriler: [il tablosu](site/veri/iller.csv), [adların sınıflandırması](site/veri/adlar.csv).
 
 Veri: © OpenStreetMap katkıcıları, ODbL. Türetilen veri (`site/veri/`, `veri/ozler.json`, `veri/sinif.jsonl`) de ODbL. Kod: MIT.

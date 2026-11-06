@@ -120,9 +120,10 @@ function ilGoster(p) {
 function yukle([o, s, n, den]) {
   O = o; SINIR = s; N = n;
   const c = o.say, oran = c.kadin / (c.kadin + c.erkek) * 100, yuz = Math.round(oran);
+  const ortaSinir = (c.kadin + c.yalniz_ad_k) / (c.kadin + c.erkek + c.yalniz_ad_k + c.yalniz_ad_e) * 100;
   const ustSinir = (c.kadin + c.belirsiz_kadin) / (c.kadin + c.erkek + c.belirsiz_kadin + c.belirsiz_erkek) * 100;
   $("#baslik").innerHTML = `Bir insanın adını taşıyan her 100 sokaktan <em>${yuz}</em> tanesi kadın.`;
-  $("#lede").textContent = `OpenStreetMap'teki ${T(c.sokak)} sokağı tek tek saydık. Adı açıkça bir kişiyi anan ${T(c.kisi)} sokağın ${T(c.kadin)} tanesi kadın, ${T(c.erkek)} tanesi erkek adı taşıyor. “Gül”, “Çiğdem”, “Murat” gibi tek sözcüklü adlar kişi mi belli olmadığı için bu sayıya katılmadı; hepsi kişi sayılsaydı oran %${Y(ustSinir, 0)} olurdu.`;
+  $("#lede").textContent = `OpenStreetMap'teki ${T(c.sokak)} sokağı tek tek saydık. Adı açıkça bir kişiyi anan ${T(c.kisi)} sokağın ${T(c.kadin)} tanesi kadın, ${T(c.erkek)} tanesi erkek adı taşıyor. Yalnız ilk adıyla geçen “Elif”, “Burak” gibi sokaklar da sayılırsa oran %${Y(ortaSinir, 0)}; “Gül”, “Çiğdem”, “Barış” gibi aynı zamanda sözcük olanlar da sayılırsa %${Y(ustSinir, 0)}.`;
   $("#sayilar").innerHTML = `<div><b>${T(c.sokak)}</b><span>tekil sokak</span></div><div><b>%${Y(c.numara / c.sokak * 100, 0)}</b><span>yalnız numara: adı yok</span></div><div><b>${T(c.kisi)}</b><span>bir kişinin adını taşıyor</span></div><div class="k"><b>%${Y(oran)}</b><span>kişilerin kadın oranı</span></div>`;
   const hep = o.kisiler.slice(0, 15), kad = o.kadinlar.slice(0, 15), ust = hep[0][1];
   satirlar($("#l-hepsi"), hep.map(([ad, n, cn]) => ({ad, n, v: T(n), k: cn === "k"})), ust);
@@ -142,9 +143,10 @@ function yukle([o, s, n, den]) {
   $("#tur-not").textContent = seh ? `Kişi adı taşıyan sokakların %${Y(seh[1] / tt * 100, 0)} kadarı bir şehidin adını taşıyor. Tür, adın kendisinden ve tanınmış kişilerin bilgisinden çıkarıldı; yerel kişiler hakkında ad dışında bilgi yok.` : "";
   $("#yontem").innerHTML = `<h3>Yöntem</h3>
     <p><b>Veri:</b> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap katkıcıları</a> (ODbL), ${esc(o.osm_tarih)} tarihli Türkiye dosyası. OSM aynı sokağı parçalara böler; aynı ad ve yaklaşık 3 km'lik aynı hücre tek sokak sayıldı. Şehirlerarası yollar, kavşak, köprü, site ve kümeevleri kapsam dışı.</p>
-    <p><b>Sınıflandırma:</b> ${T(den.farkli)} farklı sokak adı bir dil modeline (Meta Muse Spark) soruldu: kişi mi, cinsiyeti ne, ne iş yapmış. “Gül”, “Yıldız”, “Peker” gibi tek başına kişi olup olmadığı belli olmayan ${T(c.belirsiz)} sokak oranlara katılmadı. Bunların büyük kısmı çiçek ve doğa adı; bu yüzden asıl sayı kesin kişilerdir. Kadın ya da erkek adı olabilecek bu sözcüklerin hepsi kişi sayılsaydı oran %${Y(ustSinir)} olurdu, yani gerçek değer bu iki sayı arasında ve büyük ihtimalle düşük ucuna yakın. Cinsiyeti adından anlaşılmayan ${T(c.bilinmez)} kişi paydaya girmedi.</p>
+    <p><b>Sınıflandırma:</b> ${T(den.farkli)} farklı sokak adı bir dil modeline (Meta Muse Spark) soruldu: kişi mi, cinsiyeti ne, ne iş yapmış. “Gül”, “Yıldız”, “Peker” gibi tek başına kişi olup olmadığı belli olmayan ${T(c.belirsiz)} sokak oranlara katılmadı. Bu yüzden sonucu üç basamakla veriyoruz: açıkça belirli bir kişiyi anan sokaklarda <b>%${Y(oran)}</b>; yalnız ilk adıyla geçenler (Elif, Burak; bir kişiyi anmıyor, tema olarak verilmiş de olabilir) eklenince <b>%${Y(ortaSinir)}</b>; aynı zamanda sözcük olanlar (Gül, Çiğdem, Barış) da eklenince <b>%${Y(ustSinir)}</b>. Son sayı gerçekçi değil, çünkü bunların çoğu çiçek ve kavram adı; kadın adları bu sözcüklerde çok daha sık olduğu için oranı yukarı iter. Cinsiyeti adından anlaşılmayan ${T(c.bilinmez)} kişi paydaya girmedi.</p>
     <p><b>Elle denetim:</b> ${den.metin}</p>
     <p><b>Sınırlar:</b> OSM'de her sokak yok, bazı illerde kapsam daha zayıf. Resmî adres verisi (UAVT) açık olmadığı için kullanılamadı. Model bir kişiyi kaçırmış ya da cinsiyetini yanlış bilmiş olabilir; il sıralaması bu yüzden kesin değil, eğilim gösterir. Kişiler hakkında yalnız sokak adında yazan bilgi kullanıldı.</p>
+    <p><b>Veriyi indir:</b> <a href="veri/iller.csv">il il tablo (CSV)</a> · <a href="veri/adlar.csv">42 bin adın sınıflandırması (CSV)</a>. Lisans: ODbL, © OpenStreetMap katkıcıları.</p>
     <p>Kod ve yöntem: <a href="https://github.com/birtohum/sokak-adlari">github.com/birtohum/sokak-adlari</a> · <a href="https://birtohum.github.io/">birtohum</a></p>`;
   ciz(); ilGoster(34);
   $("#harita").onclick = (e) => {

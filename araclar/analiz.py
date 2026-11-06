@@ -76,6 +76,11 @@ def main():
         if ad in sinif:
             sinif[ad] = {"n": ad, "k": k, "c": sinif[ad].get("c", "?") if k == 2 else "", "t": "", "a": ""}
     ham = json.loads((KOK / "veri" / "sokaklar_ham.json").read_text(encoding="utf-8"))
+    belirsiz = {}
+    for x in open(KOK / "veri" / "belirsiz.jsonl", encoding="utf-8"):
+        if x.strip():
+            y = json.loads(x)
+            belirsiz[y["n"]] = y["s"]
     bul, sinir = il_bulucu()
     say = Counter()
     il = defaultdict(lambda: Counter())
@@ -105,6 +110,8 @@ def main():
             say["kavram"] += 1
         elif c["k"] == 2:
             say["belirsiz"] += 1
+            if belirsiz.get(o) == 0 and c.get("c") in ("e", "k"):  # yalnız kişi adı olan tek sözcük: Elif, Burak
+                say["yalniz_ad_" + c["c"]] += 1
             if c.get("c") == "k":
                 say["belirsiz_kadin"] += 1
             elif c.get("c") == "e":
@@ -147,6 +154,18 @@ def main():
             y = int((lat - B0) / (B1 - B0) * 32767); x = int((lon - L0) / (L1 - L0) * 65535)
             f.write(struct.pack("<HH", x, max(0, min(32767, y)) | (0x8000 if k else 0)))
     print({k: say[k] for k in sorted(say)})
+    # paylaşılabilir açık veri
+    with open(SITE / "iller.csv", "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f); w.writerow(["plaka", "il", "tekil_sokak", "yalniz_numara", "kisi_adli", "kadin", "erkek", "kadin_orani_yuzde"])
+        for i in iller:
+            t = i["kadin"] + i["erkek"]
+            w.writerow([i["p"], i["ad"], i["sokak"], i["numara"], i["kisi"], i["kadin"], i["erkek"], round(i["kadin"] / t * 100, 2) if t else ""])
+    oz = dict(json.loads((KOK / "veri" / "ozler.json").read_text(encoding="utf-8")))
+    with open(SITE / "adlar.csv", "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f); w.writerow(["ad", "tekil_sokak_sayisi", "sinif", "cinsiyet", "tur", "standart_ad", "tek_sozcuk_turu"])
+        ETK = {0: "kisi_degil", 1: "kisi", 2: "belirsiz"}; ST = {0: "yalniz_kisi_adi", 1: "sozcuk_de", 2: "soyad_yer"}
+        for n, x in sorted(sinif.items(), key=lambda v: -oz.get(v[0], 0)):
+            w.writerow([n, oz.get(n, 0), ETK[x["k"]], x.get("c", ""), x.get("t", ""), x.get("a", ""), ST.get(belirsiz.get(n), "")])
     print("kadın oranı", round(say["kadin"] / (say["kadin"] + say["erkek"]) * 100, 2), "%", "nokta", len(noktalar))
     print("en çok:", kisi_say.most_common(15)); print("kadın:", kadin_say.most_common(25)); print(tur_say.most_common())
     # elle denetim örneği
